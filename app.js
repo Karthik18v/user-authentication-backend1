@@ -5,11 +5,14 @@ const sqlite3 = require("sqlite3");
 const bcrpty = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { request } = require("http");
+const cors = require("cors");
 const app = express();
 app.use(express.json());
+app.use(cors());
 let db = null;
 const dbPath = path.join(__dirname, "myDatabase.db");
 const secreatKey = "Karthik121";
+const connectDb = require("./db");
 
 app.listen(3000, () => console.log(`Server Running At http://localhost:3000`));
 
@@ -69,6 +72,12 @@ app.post("/login", async (request, response) => {
   } catch (error) {
     response.status(500).json({ message: error.message });
   }
+});
+
+app.get("/", async (request, response) => {
+  const selectQuery = `SELECT * FROM users`;
+  const dbResponse = await db.all(selectQuery);
+  response.json(dbResponse);
 });
 
 initializeDbAndServer();
